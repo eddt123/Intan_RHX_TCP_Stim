@@ -11,7 +11,7 @@ CHANNEL_END = 31   # End channel (e.g., a-031)
 CURRENT_START = 33  # Start amplitude in microamps
 CURRENT_END = 1000  # End amplitude in microamps
 CURRENT_INCREMENT = 66  # Step size for current amplitude
-DURATION_INCREMENT = 66  # Duration increment in microseconds
+DURATION = 660  # Duration of both positive and negative stim in microseconds
 OUTPUT_FOLDER = "timing"
 STIMULATION_TIME = 10 # how long in seconds the board is run with the stimulation parameters
 
@@ -98,18 +98,19 @@ if __name__ == "__main__":
                 client.send_command(f"set {channel}.stimenabled true")
                 client.send_command(f"set {channel}.shape biphasic")
                 client.send_command(f"set {channel}.polarity PositiveFirst")
-                client.send_command(f"set {channel}.firstphasedurationmicroseconds {DURATION_INCREMENT}")
-                client.send_command(f"set {channel}.secondphasedurationmicroseconds {DURATION_INCREMENT}")
-                client.send_command(f"set {channel}.interphasedelaymicroseconds 25")
+                client.send_command(f"set {channel}.source F1")  # which trigger will set off pulse train
+                client.send_command(f"set {channel}.firstphasedurationmicroseconds {DURATION}")
+                client.send_command(f"set {channel}.secondphasedurationmicroseconds {DURATION}")
+                client.send_command(f"set {channel}.interphasedelaymicroseconds 0")
                 client.send_command(f"set {channel}.firstphaseamplitudemicroamps {current}")
                 client.send_command(f"set {channel}.secondphaseamplitudemicroamps {current}")
-                client.send_command(f"set {channel}.numberofstimpulses 5")
+                client.send_command(f"set {channel}.numberofstimpulses 100")  # important to note we are only sending a bunch of pulses
                 client.send_command(f"set {channel}.pulsetrainperiodmicroseconds 10000")
 
                 # Upload parameters and trigger stimulation
                 client.send_command("execute uploadstimparameters")
                 client.send_command("set runmode run")
-                client.send_command(f"execute manualstimtriggerpulse {channel}")
+                client.send_command(f"execute manualstimtriggerpulse F1") # acts as if F1 is being pressed
 
                 # Log the output to CSV
                 log_to_csv(csv_file, channel, current)

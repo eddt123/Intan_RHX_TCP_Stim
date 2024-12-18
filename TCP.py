@@ -19,7 +19,7 @@ class RHX_TCPClient:
             print(f"Connection error: {e}")
             self.sock = None
 
-    def send_command(self, command, delay=0.1):
+    def send_command(self, command, delay=0.001):
         """Send a command without waiting for a response."""
         if self.sock:
             try:
