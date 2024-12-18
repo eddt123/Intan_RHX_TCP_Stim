@@ -3,6 +3,7 @@ A python script to send TCP commands to an Intan RHS system.
 The model recieves data from a 128 channel Open Ephys system and then will adjust the stimulation parameters to optimise the recording. 
 This setup is being used to investigate selectivity of nerve stimulation. 
 
+To make a TCP connection to the Intan RHS system press 'Network' and then select the remote TCP control. Ensure the port number aligns with the one in any of the script you are running below. Press 'connect' on the Intan and then run the below scripts to remotely control the Intan system. 
 
 ## Stimulation Commands
 
