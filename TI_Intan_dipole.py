@@ -14,8 +14,9 @@ PORT = 5000
 CHANNEL_A = "a-000"
 CHANNEL_B = "a-001"
 
-# Pulse amplitude in microamps (adjust as needed)
-AMPLITUDE_UA = 100
+# Pulse amplitudes in microamps (adjust as needed)
+AMPLITUDE_UA1 = 100
+AMPLITUDE_UA2 = 100 
 
 # Pulse phase duration in microseconds
 PHASE_DURATION_US = 100
@@ -86,15 +87,15 @@ if __name__ == "__main__":
         client.send_command(f"set {CHANNEL_B}.stimenabled false")
 
         # Configure both channels
-        configure_channel(client, CHANNEL_A, AMPLITUDE_UA, PHASE_DURATION_US, INTERPHASE_DELAY_US, PERIOD_A_US)
-        configure_channel(client, CHANNEL_B, AMPLITUDE_UA, PHASE_DURATION_US, INTERPHASE_DELAY_US, PERIOD_B_US)
+        configure_channel(client, CHANNEL_A, AMPLITUDE_UA1, PHASE_DURATION_US, INTERPHASE_DELAY_US, PERIOD_A_US)
+        configure_channel(client, CHANNEL_B, AMPLITUDE_UA2, PHASE_DURATION_US, INTERPHASE_DELAY_US, PERIOD_B_US)
 
         # Upload parameters
         client.send_command("execute uploadstimparameters")
 
         # Log channel settings
-        log_to_csv(csv_file, CHANNEL_A, FREQ_A, AMPLITUDE_UA)
-        log_to_csv(csv_file, CHANNEL_B, FREQ_B, AMPLITUDE_UA)
+        log_to_csv(csv_file, CHANNEL_A, FREQ_A, AMPLITUDE_UA1)
+        log_to_csv(csv_file, CHANNEL_B, FREQ_B, AMPLITUDE_UA2)
 
         # Start running the system
         client.send_command("set runmode run")

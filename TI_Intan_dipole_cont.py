@@ -14,7 +14,8 @@ PORT = 5000
 CHANNEL_A = "a-000"
 CHANNEL_B = "a-001"
 
-AMPLITUDE_UA = 100
+AMPLITUDE_UA1 = 100
+AMPLITUDE_UA2 = 100
 PHASE_DURATION_US = 100
 INTERPHASE_DELAY_US = 0
 
@@ -72,8 +73,8 @@ if __name__ == "__main__":
         client.send_command(f"set {CHANNEL_B}.stimenabled false")
 
         # Configure both channels
-        configure_channel(client, CHANNEL_A, AMPLITUDE_UA, PHASE_DURATION_US, INTERPHASE_DELAY_US)
-        configure_channel(client, CHANNEL_B, AMPLITUDE_UA, PHASE_DURATION_US, INTERPHASE_DELAY_US)
+        configure_channel(client, CHANNEL_A, AMPLITUDE_UA1, PHASE_DURATION_US, INTERPHASE_DELAY_US)
+        configure_channel(client, CHANNEL_B, AMPLITUDE_UA2, PHASE_DURATION_US, INTERPHASE_DELAY_US)
 
         # Assign different trigger sources for each channel
         client.send_command(f"set {CHANNEL_A}.source KeyPressF1")
@@ -83,8 +84,8 @@ if __name__ == "__main__":
         client.send_command("execute uploadstimparameters")
 
         # Log channel settings
-        log_to_csv(csv_file, CHANNEL_A, FREQ_A, AMPLITUDE_UA)
-        log_to_csv(csv_file, CHANNEL_B, FREQ_B, AMPLITUDE_UA)
+        log_to_csv(csv_file, CHANNEL_A, FREQ_A, AMPLITUDE_UA1)
+        log_to_csv(csv_file, CHANNEL_B, FREQ_B, AMPLITUDE_UA2)
 
         # Start running mode
         client.send_command("set runmode run")
