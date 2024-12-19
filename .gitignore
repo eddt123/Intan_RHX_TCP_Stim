@@ -4,3 +4,5 @@ api_key.txt
 *.log
 *.raw
 timing/
+TI_dipole_logs/
+

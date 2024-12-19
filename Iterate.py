@@ -1,9 +1,11 @@
-import socket
+
 import time
 import random
 import csv
 import os
 from datetime import datetime
+
+from TCP import RHX_TCPClient
 
 # Constants
 CHANNEL_START = 0  # Start channel (e.g., a-000)
@@ -15,40 +17,6 @@ DURATION = 660  # Duration of both positive and negative stim in microseconds
 OUTPUT_FOLDER = "timing"
 STIMULATION_TIME = 10 # how long in seconds the board is run with the stimulation parameters
 
-# RHX TCP Client Class
-class RHX_TCPClient:
-    def __init__(self, host='127.0.0.1', port=5000, timeout=2):
-        """Initialize TCP client and establish connection."""
-        self.host = host
-        self.port = port
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.settimeout(timeout)
-        self.connect()
-
-    def connect(self):
-        """Connect to the RHX TCP server."""
-        try:
-            self.sock.connect((self.host, self.port))
-            print(f"Connected to RHX at {self.host}:{self.port}")
-        except Exception as e:
-            print(f"Connection error: {e}")
-            self.sock = None
-
-    def send_command(self, command, delay=0.1):
-        """Send a command."""
-        if self.sock:
-            try:
-                self.sock.sendall((command + "\n").encode('utf-8'))
-                print(f"Sent: {command}")
-                time.sleep(delay)
-            except Exception as e:
-                print(f"Error sending command: {e}")
-
-    def close(self):
-        """Close the connection."""
-        if self.sock:
-            self.sock.close()
-            print("Connection closed.")
 
 # Function to create CSV logger
 def create_csv_logger(output_folder):
@@ -98,7 +66,7 @@ if __name__ == "__main__":
                 client.send_command(f"set {channel}.stimenabled true")
                 client.send_command(f"set {channel}.shape biphasic")
                 client.send_command(f"set {channel}.polarity PositiveFirst")
-                client.send_command(f"set {channel}.source F1")  # which trigger will set off pulse train
+                client.send_command(f"set {channel}.source KeyPressF1")  # which trigger will set off pulse train
                 client.send_command(f"set {channel}.firstphasedurationmicroseconds {DURATION}")
                 client.send_command(f"set {channel}.secondphasedurationmicroseconds {DURATION}")
                 client.send_command(f"set {channel}.interphasedelaymicroseconds 0")
