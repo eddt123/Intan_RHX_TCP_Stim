@@ -5,7 +5,7 @@ import csv
 import os
 from datetime import datetime
 
-from TCP import RHX_TCPClient
+from utils.TCP import RHX_TCPClient
 
 # Constants
 CHANNEL_START = 0  # Start channel (e.g., a-000)

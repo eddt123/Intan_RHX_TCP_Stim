@@ -31,3 +31,17 @@ Channel Reset:
 CSV Logging: 
     Outputs a log file in a timing folder, recording the timestamp, channel, and current amplitude for each configuration.
     The script ensures that all channels and amplitudes are tested efficiently and sequentially while maintaining a clear log for analysis.
+
+## TI_Intan_dipole.py
+Used to do temporal interference using the Intan RHS system (PWM-TI). Creates a 1200Hz and 1250Hz pulse trains at two separate channels to create a interference region at 50Hz. The 50Hz region is created for ~0.2s (maximum number of pulses 255), equivalent to 10 period cycles for the 50Hz tone. 
+
+## TI_Intan_dipole_cont.py
+Identical to TI_Intan_dipole.py but uses a trigger to continously send a single pulse to make the 1200Hz and 1250Hz tone to allow for longer stimulation periods. 
+
+## read.py
+Connects to an Intan system and records data from channels which are specified. The recorded data is saved in the 'data' folder. Use the functions in the utils folder to display the data.  
+
+## TI_dipole_algo
+This contains a feedback loop between the 128 channels being recorded and the TI focal point. 
+Different models (Bayesian Optimisation, Machine learning, Reinforcement Learning etc) can be selected as the base model to decide on actions.
+The script uses a model which takes the 128 channels as an input then the channels for TI and the currents used for each TI channel are adjusted until the modulation index of the desired channel is maximised and the MI of the other channels is as small as it can be. 

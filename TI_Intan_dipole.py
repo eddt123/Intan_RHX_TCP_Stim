@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 import csv
 
-from TCP import RHX_TCPClient
+from utils.TCP import RHX_TCPClient
 
 # ======================================================================
 # Configuration Parameters
@@ -33,7 +33,7 @@ FREQ_B = 1250  # Hz
 PERIOD_A_US = int((1.0 / FREQ_A) * 1_000_000)
 PERIOD_B_US = int((1.0 / FREQ_B) * 1_000_000)
 
-# Duration to run stimulation (in seconds)
+# Duration to run stimulation (in seconds), remember the stim is only for 0.2s (255 pulses) 
 STIMULATION_TIME = 10
 
 # Output directory for logging
