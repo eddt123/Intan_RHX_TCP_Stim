@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 import csv
 
-from TCP import RHX_TCPClient
+from utils.TCP import RHX_TCPClient
 
 # ======================================================================
 # Configuration Parameters
