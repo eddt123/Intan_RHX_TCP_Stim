@@ -41,6 +41,8 @@ def get_recording_data():
     """
     # Replace this with the real implementation
     # change this to calculate the Modulation Index for each channel
+    # filter out anything but the tone
+    # see the signal processing part of octopole paper
     return np.random.rand(128)
 
 # ----------------------------------------------------------------------

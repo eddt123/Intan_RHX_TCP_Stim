@@ -35,6 +35,8 @@ CSV Logging:
     Outputs a log file in a timing folder, recording the timestamp, channel, and current amplitude for each configuration.
     The script ensures that all channels and amplitudes are tested efficiently and sequentially while maintaining a clear log for analysis.
 
+For each stimulation channel, each other channel is iteratively used as the return channel. This tests all avialable current paths. 
+
 ## TI_Intan_dipole.py
 Used to do temporal interference using the Intan RHS system (PWM-TI). Creates a 1200Hz and 1250Hz pulse trains at two separate channels to create a interference region at 50Hz. The 50Hz region is created for ~0.2s (maximum number of pulses 255), equivalent to 10 period cycles for the 50Hz tone. 
 
