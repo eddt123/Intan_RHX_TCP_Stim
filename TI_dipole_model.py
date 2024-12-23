@@ -25,7 +25,7 @@ MAX_ITERATIONS = 20
 TARGET_CHANNEL_INDEX = 30
 
 # ----------------------------------------------------------------------
-# Placeholder Functions for Data Acquisition
+# Data Acquisition
 # ----------------------------------------------------------------------
 
 def get_recording_data():
@@ -56,29 +56,39 @@ if __name__ == "__main__":
     for iteration in range(MAX_ITERATIONS):
         print(f"Iteration {iteration + 1}/{MAX_ITERATIONS}")
 
-        # Get suggested parameters from the model
+        # Get suggested parameters
         action = model.suggest_parameters()
         channel_a = action["channel_a"]
         channel_b = action["channel_b"]
+        return_channel_a = action["return_channel_a"]
+        return_channel_b = action["return_channel_b"]
         amplitude_a = action["amplitude_a"]
         amplitude_b = action["amplitude_b"]
 
-        print(f"Selected parameters: channel_a={channel_a}, channel_b={channel_b}, \
-              amplitude_a={amplitude_a}, amplitude_b={amplitude_b}")
+        print(f"Selected parameters: "
+              f"channel_a={channel_a}, channel_b={channel_b}, "
+              f"return_channel_a={return_channel_a}, return_channel_b={return_channel_b}, "
+              f"amplitude_a={amplitude_a}, amplitude_b={amplitude_b}")
 
-        # Run stimulation
-        run_ti_dipole_stimulation(channel_a, channel_b, amplitude_a, amplitude_b)
+        # Run stimulation with both source and return channels
+        run_ti_dipole_stimulation(
+            channel_a,
+            channel_b,
+            return_channel_a,
+            return_channel_b,
+            amplitude_a,
+            amplitude_b
+        )
 
-        # Wait for stimulation to take effect (e.g., 5 seconds)
+        # Wait for stimulation to take effect
         time.sleep(LOOP_INTERVAL)
 
         # Acquire recording data
         recording_data = get_recording_data()
 
-        # Compute a result metric for the optimizer:
-        # Example metric: target channel value minus 0.1 * sum of all other channels
-        result = (recording_data[TARGET_CHANNEL_INDEX] -
-                  0.1 * np.sum(np.delete(recording_data, TARGET_CHANNEL_INDEX)))
+        # Compute a result metric for the optimizer
+        result = (recording_data[TARGET_CHANNEL_INDEX]
+                  - 0.1 * np.sum(np.delete(recording_data, TARGET_CHANNEL_INDEX)))
 
         print(f"Result for current configuration: {result}")
 

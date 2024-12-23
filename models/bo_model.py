@@ -21,17 +21,21 @@ import numpy as np
 
 class BOModel:
     def __init__(self, ti_channels, amplitude_range=(0, 200)):
-        # Define the parameter space
-        # channel_a: categorical
-        # channel_b: categorical (same set as channel_a)
-        # amplitude_a: integer
-        # amplitude_b: integer
+        # Define the parameter space:
+        #   1) channel_a: categorical
+        #   2) channel_b: categorical
+        #   3) return_channel_a: categorical
+        #   4) return_channel_b: categorical
+        #   5) amplitude_a: integer
+        #   6) amplitude_b: integer
         self.ti_channels = ti_channels
         self.amplitude_range = amplitude_range
 
         self.space = [
             Categorical(ti_channels, name='channel_a'),
             Categorical(ti_channels, name='channel_b'),
+            Categorical(ti_channels, name='return_channel_a'),
+            Categorical(ti_channels, name='return_channel_b'),
             Integer(amplitude_range[0], amplitude_range[1], name='amplitude_a'),
             Integer(amplitude_range[0], amplitude_range[1], name='amplitude_b')
         ]
@@ -46,20 +50,28 @@ class BOModel:
     def suggest_parameters(self):
         """
         Suggest new parameters to try based on past results.
+        Ensures channel_a, channel_b, return_channel_a, return_channel_b 
+        are all distinct.
         """
-        # Suggest a new set of parameters from the optimizer
-        suggestion = self.optimizer.ask()
-        
-        # Ensure channel_b != channel_a. If they are the same, re-sample until different.
-        # This is a simple approach; a more elegant approach would encode pairs differently.
-        while suggestion[1] == suggestion[0]:
+        while True:
+            # Suggest a new set of parameters from the optimizer
             suggestion = self.optimizer.ask()
-        
-        channel_a, channel_b, amplitude_a, amplitude_b = suggestion
-        
+            (channel_a, channel_b,
+             return_channel_a, return_channel_b,
+             amplitude_a, amplitude_b) = suggestion
+
+            # Check uniqueness of all channels, we do not want to share any channels
+            all_channels = {channel_a, channel_b, return_channel_a, return_channel_b}
+            if len(all_channels) == 4:
+                # We have four distinct channel names; break out of loop
+                break
+            # Otherwise, keep asking until we get a set of distinct channels
+
         return {
             "channel_a": channel_a,
             "channel_b": channel_b,
+            "return_channel_a": return_channel_a,
+            "return_channel_b": return_channel_b,
             "amplitude_a": amplitude_a,
             "amplitude_b": amplitude_b
         }
@@ -67,16 +79,22 @@ class BOModel:
     def update(self, params, result):
         """
         Update the optimizer with the result from a given set of parameters.
-        result should be a scalar score (the value you want to maximize).
+        'result' should be a scalar score (the value you want to maximize).
         """
         # Convert to the parameter order used in suggest_parameters
-        p = [params["channel_a"], params["channel_b"], params["amplitude_a"], params["amplitude_b"]]
+        p = [
+            params["channel_a"],
+            params["channel_b"],
+            params["return_channel_a"],
+            params["return_channel_b"],
+            params["amplitude_a"],
+            params["amplitude_b"]
+        ]
         self.params_history.append(p)
         self.results_history.append(result)
 
-        # The optimizer expects a MINIMIZATION problem, so if we want to maximize,
-        # we can negate the result or tell the optimizer. 
-        # skopt doesn't directly support maximizing, so we can just give it -result.
+        # The optimizer expects a MINIMIZATION problem. We want to maximize,
+        # so we pass -result.
         self.optimizer.tell(p, -result)
 
     def best_result(self):
@@ -87,3 +105,4 @@ class BOModel:
             return None, None
         best_idx = np.argmax(self.results_history)
         return self.results_history[best_idx], self.params_history[best_idx]
+

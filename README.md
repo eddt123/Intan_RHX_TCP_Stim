@@ -49,4 +49,4 @@ Connects to an Intan system and records data from channels which are specified. 
 ## TI_dipole_algo
 This contains a feedback loop between the 128 channels being recorded and the TI focal point. 
 Different models (Bayesian Optimisation, Machine learning, Reinforcement Learning etc) can be selected as the base model to decide on actions.
-The script uses a model which takes the 128 channels as an input then the channels for TI and the currents used for each TI channel are adjusted until the modulation index of the desired channel is maximised and the MI of the other channels is as small as it can be. 
+The script uses a model which takes the 128 channels as an input then the channels for TI (both source and sink) and the currents used for each TI channel are adjusted until the modulation index of the desired channel is maximised and the MI of the other channels is as small as it can be. 
