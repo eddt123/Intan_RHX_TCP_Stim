@@ -6,7 +6,9 @@ from datetime import datetime
 
 from utils.TCP import RHX_TCPClient
 
-# Constants
+# ----------------------------------------------------------------------
+# Configuration / Parameters
+# ----------------------------------------------------------------------
 CHANNEL_START = 0   # Start channel (e.g., a-000)
 CHANNEL_END = 11   # End channel (e.g., a-031)
 CURRENT_START = 33  # Start amplitude in microamps
@@ -15,6 +17,11 @@ CURRENT_INCREMENT = 66  # Step size for current amplitude
 DURATION = 660      # Duration of the pulse in microseconds
 OUTPUT_FOLDER = "timing"
 STIMULATION_TIME = 10  # how long (in seconds) the board is run with these stim parameters
+
+
+# ======================================================================
+# Run the Stimulation
+# ======================================================================
 
 # Function to create CSV logger
 def create_csv_logger(output_folder):

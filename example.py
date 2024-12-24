@@ -1,4 +1,6 @@
-from TCP import RHX_TCPClient
+from utils.TCP import RHX_TCPClient
+
+# remember we also need a return channels otherwise REF will just be used as the return
 
 if __name__ == "__main__":
     client = RHX_TCPClient(host="127.0.0.1", port=5000)

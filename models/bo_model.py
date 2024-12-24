@@ -106,3 +106,98 @@ class BOModel:
         best_idx = np.argmax(self.results_history)
         return self.results_history[best_idx], self.params_history[best_idx]
 
+class TVBOModel:
+    def __init__(self, ti_channels, amplitude_range=(0, 200), time_decay=0.9):
+        """
+        Initialize a Time-Varying Bayesian Optimization model.
+
+        Parameters:
+        - ti_channels: List of available channels for stimulation.
+        - amplitude_range: Tuple (min, max) for amplitude values.
+        - time_decay: Weight applied to past observations, with recent data having more influence.
+        """
+        self.ti_channels = ti_channels
+        self.amplitude_range = amplitude_range
+        self.time_decay = time_decay  # Determines how much old data influences the model.
+
+        self.space = [
+            Categorical(ti_channels, name='channel_a'),
+            Categorical(ti_channels, name='channel_b'),
+            Categorical(ti_channels, name='return_channel_a'),
+            Categorical(ti_channels, name='return_channel_b'),
+            Integer(amplitude_range[0], amplitude_range[1], name='amplitude_a'),
+            Integer(amplitude_range[0], amplitude_range[1], name='amplitude_b')
+        ]
+
+        # Create a Bayesian optimization object
+        self.optimizer = Optimizer(dimensions=self.space, random_state=0)
+
+        # Keep track of (params, results, timestamps)
+        self.params_history = []
+        self.results_history = []
+        self.time_stamps = []
+
+    def suggest_parameters(self):
+        """
+        Suggest new parameters to try based on past results.
+        Ensures channel_a, channel_b, return_channel_a, return_channel_b 
+        are all distinct.
+        """
+        while True:
+            suggestion = self.optimizer.ask()
+            (channel_a, channel_b,
+             return_channel_a, return_channel_b,
+             amplitude_a, amplitude_b) = suggestion
+
+            # Ensure all channels are distinct
+            all_channels = {channel_a, channel_b, return_channel_a, return_channel_b}
+            if len(all_channels) == 4:
+                break
+
+        return {
+            "channel_a": channel_a,
+            "channel_b": channel_b,
+            "return_channel_a": return_channel_a,
+            "return_channel_b": return_channel_b,
+            "amplitude_a": amplitude_a,
+            "amplitude_b": amplitude_b
+        }
+
+    def update(self, params, result):
+        """
+        Update the optimizer with the result from a given set of parameters.
+        Applies a time decay to older results to account for temporal changes.
+        """
+        # Convert to parameter order used in suggest_parameters
+        p = [
+            params["channel_a"],
+            params["channel_b"],
+            params["return_channel_a"],
+            params["return_channel_b"],
+            params["amplitude_a"],
+            params["amplitude_b"]
+        ]
+        
+        current_time = len(self.time_stamps)  # Simulate a time index (or use a real timestamp if available)
+        self.params_history.append(p)
+        self.results_history.append(result)
+        self.time_stamps.append(current_time)
+
+        # Apply time decay to past results
+        adjusted_results = [
+            -res * (self.time_decay ** (current_time - t)) 
+            for t, res in enumerate(self.results_history)
+        ]
+
+        # Update optimizer with decayed results
+        for param, adj_result in zip(self.params_history, adjusted_results):
+            self.optimizer.tell(param, adj_result)
+
+    def best_result(self):
+        """
+        Return the best result found so far and corresponding parameters.
+        """
+        if not self.results_history:
+            return None, None
+        best_idx = np.argmax(self.results_history)
+        return self.results_history[best_idx], self.params_history[best_idx]
