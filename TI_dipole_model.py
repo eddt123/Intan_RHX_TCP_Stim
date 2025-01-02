@@ -43,6 +43,10 @@ def get_recording_data():
     # change this to calculate the Modulation Index for each channel
     # filter out anything but the tone
     # see the signal processing part of octopole paper
+
+    # use the read_data method of using the .recording class
+    # then use the read function to actually read this .rhs file to extract all the channel values
+    # also this script we need to specify where the data can be found
     return np.random.rand(128)
 
 # ----------------------------------------------------------------------

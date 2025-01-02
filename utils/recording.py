@@ -1,3 +1,7 @@
+'''
+example script on how to use the recording function in the TCP class
+'''
+
 from TCP import RHX_TCPClient
 
 # Initialize the client (commands server)
