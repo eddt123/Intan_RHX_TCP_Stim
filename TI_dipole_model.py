@@ -3,6 +3,8 @@ import numpy as np
 from utils.TI import run_ti_dipole_stimulation
 from models.bo_model import BOModel
 
+from utils.read_data import read_intan_rhs_file
+
 # ----------------------------------------------------------------------
 # Configuration / Parameters
 # ----------------------------------------------------------------------
@@ -30,24 +32,40 @@ TARGET_CHANNEL_INDEX = 30
 
 def get_recording_data():
     """
-    Placeholder function to acquire data from 128 recording channels.
-    Need to change this to be for the 128 channels of the Intan. 
+    Acquire and process data from (up to) 128 recording channels
+    of an Intan .rhs file.
 
     Returns
     -------
     np.ndarray
-        A mock 1D numpy array of length 128 representing the current amplitude 
-        or measured value on each recording channel.
+        A 1D numpy array of length 128 representing some processed 
+        measurement on each recording channel. In this example, we 
+        simply take the 'last sample' from each channel as a placeholder.
     """
-    # Replace this with the real implementation
-    # change this to calculate the Modulation Index for each channel
-    # filter out anything but the tone
-    # see the signal processing part of octopole paper
+    # 1) NEED TO CHANGE THIS SO THAT THE RECORDING FUNCTION WE CAN SPECIFY THE OUTPUT
+    file_path = r"C:\Users\eddyt\Documents\Intan recordings\testing\testing2_250102_174724\testing2_250102_174724.rhs"
 
-    # use the read_data method of using the .recording class
-    # then use the read function to actually read this .rhs file to extract all the channel values
-    # also this script we need to specify where the data can be found
-    return np.random.rand(128)
+    # 2) Use the utility function to read the file and extract amplifier data.
+    data, header = read_intan_rhs_file(file_path)
+    amplifier_data = data['amplifier_data']  # shape: (num_channels, total_samples)
+
+    # 3) Perform any further signal processing as desired.
+    #    For now, we just grab the last sample from the first 128 channels.
+    num_channels_in_file = amplifier_data.shape[0]
+    if num_channels_in_file >= 128:
+        # Example: last sample from each channel
+        recording_data = amplifier_data[:128, -1]
+    else:
+        # Fallback if fewer than 128 channels exist in the file
+        # (Or handle differently if your system always has at least 128)
+        dummy_fill = 128 - num_channels_in_file
+        recording_data = np.concatenate([
+            amplifier_data[:, -1],  # actual channels
+            np.zeros(dummy_fill)    # zero pad
+        ])
+
+    # Return our 1D array of length 128
+    return recording_data
 
 # ----------------------------------------------------------------------
 # Main Optimization Script
