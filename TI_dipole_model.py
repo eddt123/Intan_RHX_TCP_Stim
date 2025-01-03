@@ -43,6 +43,8 @@ def get_recording_data():
         simply take the 'last sample' from each channel as a placeholder.
     """
     # 1) NEED TO CHANGE THIS SO THAT THE RECORDING FUNCTION WE CAN SPECIFY THE OUTPUT
+    # MUST RETURN ONLY THE 50HZ AMPLITUDE
+    # THE NUMBER OF CHANNELS IS HARDCODED, IT SHOULD LOOK AT RECORDING_CHANNELS
     file_path = r"C:\Users\eddyt\Documents\Intan recordings\testing\testing2_250102_174724\testing2_250102_174724.rhs"
 
     # 2) Use the utility function to read the file and extract amplifier data.
